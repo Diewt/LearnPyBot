@@ -4,10 +4,14 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from datetime import datetime
 import pytz
+import database
 
 # Grabbing Evironment variables
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+
+# Initial Database Creation
+database.createTable()
 
 # Command Prefix
 client = commands.Bot(command_prefix='-')
@@ -25,7 +29,6 @@ async def on_message(message):
     
     await client.process_commands(message)
     await message.channel.send('test')
-
 
 
 # Commands
