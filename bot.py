@@ -32,6 +32,8 @@ async def on_message(message):
 
 
 # Commands
+
+# Command to print out time in timezone
 @client.command()
 async def time(message, area):
     print(area)
@@ -44,6 +46,13 @@ async def time(message, area):
         print('error')
         await message.channel.send('Error: '+ area + ' is not a valid input')
 
-        
+# Command to Register User into Database
+@client.command()
+async def register(message):
+    print(message.author.id)
+    if database.registerUser(message.author.id):
+        await message.channel.send('You are already registered')
+    else:
+        await message.channel.send('You are successfully Registered')
 
 client.run(TOKEN)
