@@ -13,6 +13,8 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 # Initial Database Creation
 database.createTable()
 
+database.updateDatabase()
+
 # Command Prefix
 client = commands.Bot(command_prefix='-', intents = discord.Intents.all())
 
@@ -98,5 +100,10 @@ async def getUsers(message, *, roleName):
     file=discord.File(userListFile ,"userList.txt")
     )
     userListFile.close()
+
+# Command to get exp
+@client.command()
+async def farm(message):
+    database.exp(message.author.id, 20)
 
 client.run(TOKEN)

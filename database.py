@@ -18,8 +18,38 @@ def createTable():
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS users ("
             "discord_id BIGINT NOT NULL,"
-            "currency BIGINT NOT NULL,"
-            "array_test TEXT [])"
+            "currency BIGINT DEFAULT 0 NOT NULL,"
+            "array_test TEXT [],"
+            "exp BIGINT DEFAULT 0 NOT NULL)"
+            )
+
+        # Close communication to Database
+        cursor.close()
+
+        # Commit Changes
+        connection.commit()
+
+    except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+    # Close Connection
+    finally:
+        if connection is not None:
+            connection.close()
+
+
+# Function to update data base with new column
+def updateDatabase():
+
+    try:
+        # Connect to Database
+        connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = connection.cursor()
+
+        # Excute SQL Statement to create table
+        cursor.execute(
+            "ALTER TABLE users "
+            "ADD COLUMN IF NOT EXISTS exp BIGINT DEFAULT 0 NOT NULL"
             )
 
         # Close communication to Database
@@ -80,7 +110,7 @@ def isUserRegistered(userID):
         # Flag to check if user already exists in database
         existflag = None
 
-        # Excute SQL Statement to create table
+        # Excute SQL Statement 
         cursor.execute(sql)
         if cursor.fetchone() is not None:
             # User already exists
@@ -138,3 +168,64 @@ def updateArray(userID):
         if connection is not None:
             connection.close()
 
+# Function to add exp to the requested user
+def exp(userID, exp):
+            
+    try:
+        # Connect to Database
+        connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = connection.cursor()
+
+        sql = 'SELECT exp FROM users WHERE discord_id =' + str(userID)
+
+        # Excute SQL Statement to create table
+        cursor.execute(sql)
+        value = cursor.fetchone()
+        updatevalue = str(int(value[0]) + exp)
+
+        sql = 'UPDATE users SET exp =' + updatevalue +  'where discord_id =' + str(userID)
+
+        cursor.execute(sql)
+
+        # Close communication to Database
+        cursor.close()
+
+        # Commit Changes
+        connection.commit()
+
+    except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+    # Close Connection
+    finally:
+        if connection is not None:
+            connection.close()
+
+# Function to test inserting stuff into the array
+def updateExp(userID):
+        
+    try:
+        # Connect to Database
+        connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = connection.cursor()
+
+        # First Step: We need to get the previous value from database
+        sql = 'SELECT exp FROM users WHERE discord_id =' + str(userID) 
+
+        cursor.execute(sql)    
+        print(cursor.fetchone())
+
+
+        # Close communication to Database
+        cursor.close()
+
+        # Commit Changes
+        connection.commit()
+
+    except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+    # Close Connection
+    finally:
+        if connection is not None:
+            connection.close()
